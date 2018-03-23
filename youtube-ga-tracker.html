@@ -263,7 +263,7 @@ var ytTracker = (function(document, window, config) {
 
   }
 
-  function checkCompletion(player, marks, videoId) {
+  function checkCompletion(player, marks, videoName, videoId) {
 
     var currentTime = player.getCurrentTime();
     var key;
@@ -275,7 +275,7 @@ var ytTracker = (function(document, window, config) {
       if (marks[key] <= currentTime && !player[videoId][key]) {
 
         player[videoId][key] = true;
-        fireAnalyticsEvent(videoId, key);
+        fireAnalyticsEvent(videoName, videoId, key);
 
       }
 
@@ -291,6 +291,7 @@ var ytTracker = (function(document, window, config) {
     var targetVideoUrl = player.getVideoUrl();
     var targetVideoId = targetVideoUrl.match(/[?&]v=([^&#]*)/)[1]; // Extract the ID    
     var playerState = player.getPlayerState();
+    var name = player.getVideoData().title;
     var duration = Math.floor(player.getDuration());
     var marks = getMarks(duration);
     var playerStatesIndex = {
@@ -308,7 +309,7 @@ var ytTracker = (function(document, window, config) {
       youTubeIframe.timer = setInterval(function() {
 
         // Check every second to see if we've hit any of our percentage viewed marks
-        checkCompletion(player, marks, youTubeIframe.videoId);
+        checkCompletion(player, marks, youTubeIframe.name, youTubeIframe.videoId);
 
       }, 1000);
 
@@ -324,6 +325,7 @@ var ytTracker = (function(document, window, config) {
 
       youTubeIframe.playTracker[targetVideoId] = true;
       youTubeIframe.videoId = targetVideoId;
+      youTubeIframe.name = name;
       youTubeIframe.pauseFlag = false;
 
     }
@@ -353,16 +355,16 @@ var ytTracker = (function(document, window, config) {
     // If we're meant to track this event, fire it
     if (eventsFired[state]) {
 
-      fireAnalyticsEvent(youTubeIframe.videoId, state);
+      fireAnalyticsEvent(youTubeIframe.name, youTubeIframe.videoId, state);
 
     }
 
   }
 
   // Fire an event to Google Analytics or Google Tag Manager
-  function fireAnalyticsEvent(videoId, state) {
+  function fireAnalyticsEvent(videoName, videoId, state) {
 
-    var videoUrl = 'https://www.youtube.com/watch?v=' + videoId;
+    var videoUrl = 'name: ' + videoName + ' | id:' + videoId;
     var _ga = window.GoogleAnalyticsObject;
 
     if (typeof window[dataLayerName] !== 'undefined' && !_config.forceSyntax) {
