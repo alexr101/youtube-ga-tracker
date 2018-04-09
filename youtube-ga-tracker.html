@@ -257,6 +257,16 @@ var ytTracker = (function(document, window, config) {
 
       }
 
+      var secondMarks = _config.secondTracking.atPositions;
+
+      for(i = 0; i < secondMarks.length; i++) {
+        var _secondMark = secondMarks[i];
+        var _mark = _secondMark + ' seconds watched';
+        var _time = _secondMark;
+
+        marks[_mark] = Math.floor(_time);
+      }
+
     }
 
     return marks;
@@ -472,8 +482,10 @@ var ytTracker = (function(document, window, config) {
   'percentageTracking': {
     'every': 25,
     'each': [10, 90]
+  },
+  'secondTracking': {
+    'atPositions': [5, 10, 15, 20],
   }
-  
 });
 /*
  * Configuration Details
