@@ -263,7 +263,7 @@ var ytTracker = (function(document, window, config) {
 
   }
 
-  function onPreDestroy(player, iframe) {
+  function preDestroyTracking(player, iframe) {
     var currentTime = Math.floor( player.getCurrentTime() );
 
     fireAnalyticsEvent( currentTime, iframe.name,'Video Stopped' );
@@ -385,7 +385,7 @@ var ytTracker = (function(document, window, config) {
         'event': 'youTubeTrack',
         'attributes': {
 
-          'eventData': eventData,
+          'videoUrl': eventData,
           'videoAction': state
 
         }
@@ -400,7 +400,7 @@ var ytTracker = (function(document, window, config) {
 
     } else if (typeof window._gaq !== 'undefined' && forceSyntax !== 1) {
 
-      window._gaq.push(['_trackEvent', 'Videos', state, videventDataeoUrl]);
+      window._gaq.push(['_trackEvent', 'Videos', state, eventData]);
 
     }
 
@@ -460,7 +460,7 @@ var ytTracker = (function(document, window, config) {
 
   return {
     addYouTubeEvents: addYouTubeEvents,
-    onPreDestroy: onPreDestroy
+    preDestroyTracking: preDestroyTracking
   }
 
 })(document, window, {
